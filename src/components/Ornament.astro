@@ -1,0 +1,25 @@
+---
+interface Props {
+  class?: string;
+  label?: string;
+}
+const { class: className, label } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 120 16"
+  fill="none"
+  role={label ? "img" : "presentation"}
+  aria-label={label}
+  aria-hidden={label ? undefined : "true"}
+  class:list={["text-[color:var(--color-ink-faint)]", className]}
+>
+  <g stroke="currentColor" stroke-width="1" stroke-linecap="round">
+    <line x1="4" y1="8" x2="48" y2="8" opacity="0.6" />
+    <line x1="72" y1="8" x2="116" y2="8" opacity="0.6" />
+  </g>
+  <g stroke="var(--color-accent)" stroke-width="1" fill="none">
+    <circle cx="60" cy="8" r="3.5" />
+    <circle cx="60" cy="8" r="0.75" fill="var(--color-accent)" />
+  </g>
+</svg>

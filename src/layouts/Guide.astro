@@ -1,0 +1,478 @@
+---
+import '../styles/global.css';
+import { getCollection } from 'astro:content';
+import Logomark from '../components/Logomark.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  currentSlug?: string;
+}
+
+const { title, description, currentSlug } = Astro.props;
+
+const entries = await getCollection('guide');
+const chapters = entries
+  .slice()
+  .sort((a, b) => a.data.order - b.data.order);
+
+const sidebarChapters = chapters.filter((entry) => entry.data.order > 0);
+const currentChapter = chapters.find((entry) => entry.id === currentSlug);
+const currentYear = new Date().getFullYear();
+
+const guideRepo = 'Rudiment-UI/guide';
+const guideRepoUrl = `https://github.com/${guideRepo}`;
+const currentSourcePath = currentSlug
+  ? `building-your-own-component-library/${currentSlug}.md`
+  : null;
+const currentEditUrl = currentSourcePath
+  ? `${guideRepoUrl}/edit/main/${currentSourcePath}`
+  : null;
+const newIssueUrl = `${guideRepoUrl}/issues/new?labels=content`;
+
+const siteName = 'Rudiment Guide';
+const siteTagline = 'A field guide to building a component system';
+const authorName = 'Joshua Briley';
+const authorUrl = 'https://joshuabriley.com';
+
+const siteOrigin = Astro.site?.origin ?? 'https://rudiment-guide.netlify.app';
+const siteUrl = siteOrigin.replace(/\/$/, '');
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, '') || siteUrl;
+
+const ogImagePath = '/images/rudiment-og-image.png';
+const ogImageUrl = new URL(ogImagePath, siteUrl).href;
+const ogImageAlt = 'Rudiment — A Field Guide';
+
+const isArticle = currentChapter !== undefined && currentChapter.data.order > 0;
+const pageTitle = `${title} — ${siteName}`;
+
+const introEntry = chapters.find((entry) => entry.data.order === 0);
+const introDescription = introEntry?.data.description ?? description;
+
+const publisher = {
+  '@type': 'Organization',
+  name: 'Rudiment',
+  url: siteUrl,
+  logo: {
+    '@type': 'ImageObject',
+    url: new URL('/favicon.svg', siteUrl).href,
+  },
+};
+
+const author = {
+  '@type': 'Person',
+  name: authorName,
+  url: authorUrl,
+};
+
+const breadcrumbItems = isArticle && currentChapter
+  ? [
+      { '@type': 'ListItem', position: 1, name: 'Introduction', item: siteUrl },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: currentChapter.data.title,
+        item: canonicalUrl,
+      },
+    ]
+  : [{ '@type': 'ListItem', position: 1, name: 'Introduction', item: siteUrl }];
+
+const breadcrumbNode = {
+  '@type': 'BreadcrumbList',
+  '@id': `${canonicalUrl}#breadcrumbs`,
+  itemListElement: breadcrumbItems,
+};
+
+const bookNode = {
+  '@type': 'Book',
+  '@id': `${siteUrl}/#book`,
+  name: 'Building your own component system, from first principles',
+  alternateName: siteName,
+  bookFormat: 'https://schema.org/EBook',
+  inLanguage: 'en',
+  description: introDescription,
+  url: siteUrl,
+  image: ogImageUrl,
+  author,
+  publisher,
+  numberOfPages: sidebarChapters.length,
+  hasPart: sidebarChapters.map((entry) => ({
+    '@type': 'Chapter',
+    position: entry.data.order,
+    name: entry.data.title,
+    description: entry.data.description,
+    url: new URL(`/${entry.id}/`, siteUrl).href.replace(/\/$/, ''),
+  })),
+};
+
+const websiteNode = {
+  '@type': 'WebSite',
+  '@id': `${siteUrl}/#website`,
+  name: siteName,
+  alternateName: siteTagline,
+  url: siteUrl,
+  description: introDescription,
+  inLanguage: 'en',
+  publisher,
+};
+
+const articleNode = isArticle && currentChapter
+  ? {
+      '@type': 'TechArticle',
+      '@id': `${canonicalUrl}#article`,
+      headline: currentChapter.data.title,
+      name: currentChapter.data.title,
+      description: currentChapter.data.description,
+      url: canonicalUrl,
+      image: ogImageUrl,
+      inLanguage: 'en',
+      author,
+      publisher,
+      mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
+      isPartOf: { '@id': `${siteUrl}/#book` },
+      position: currentChapter.data.order,
+      articleSection: `Chapter ${currentChapter.data.order}`,
+    }
+  : null;
+
+const graph = [websiteNode, bookNode, breadcrumbNode, ...(articleNode ? [articleNode] : [])];
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': graph,
+};
+
+const ogType = isArticle ? 'article' : 'website';
+---
+
+<!doctype html>
+<html lang="en" class="antialiased">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={authorName} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:secure_url" content={ogImageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1536" />
+    <meta property="og:image:height" content="1024" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    {isArticle && currentChapter && (
+      <>
+        <meta property="article:author" content={authorName} />
+        <meta property="article:section" content={`Chapter ${currentChapter.data.order}`} />
+      </>
+    )}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  </head>
+  <body class="isolate bg-[color:var(--color-canvas)] text-[color:var(--color-ink)]">
+    <a href="#main-content" data-skip-link>Skip to main content</a>
+
+    <header class="border-b border-[color:var(--color-hairline)] bg-[color:var(--color-canvas)]/90 backdrop-blur sticky top-0 z-30">
+      <div class="mx-auto flex max-w-[80rem] items-center justify-between gap-6 px-6 py-4 sm:px-10">
+        <a
+          href="/"
+          rel="home"
+          aria-label="Homepage"
+          class="group flex items-center gap-3"
+        >
+          <Logomark class="size-7" />
+          <span class="flex flex-col leading-none">
+            <span class="font-display text-xl text-[color:var(--color-ink)]">Rudiment</span>
+            <span class="text-[0.6875rem] tracking-[0.22em] uppercase text-[color:var(--color-ink-faint)] mt-1">
+              A field guide
+            </span>
+          </span>
+        </a>
+
+        <nav aria-label="Primary" class="flex items-center gap-2 sm:gap-6">
+          <ul role="list" class="hidden items-center gap-6 text-sm text-[color:var(--color-ink-muted)] sm:flex">
+            <li>
+              <a
+                href="https://rudiment-ui.netlify.app/"
+                target="_blank"
+                rel="noreferrer external"
+                class="transition-colors hover:text-[color:var(--color-ink)]"
+              >
+                Storybook
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/Rudiment-UI/rudiment-ui"
+                target="_blank"
+                rel="noreferrer external"
+                class="transition-colors hover:text-[color:var(--color-ink)]"
+              >
+                Repository
+              </a>
+            </li>
+          </ul>
+
+          {sidebarChapters.length > 0 && chapters[0] && (
+            <a
+              href={currentSlug ? `/${sidebarChapters[0].id}/` : `/${sidebarChapters[0].id}/`}
+              class="inline-flex items-center gap-2 rounded-full bg-[color:var(--color-ink)] px-4 py-2 text-sm font-medium text-[color:var(--color-canvas)] transition-colors hover:bg-[color:var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-accent)]"
+            >
+              Start reading
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="size-4 shrink-0">
+                <path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          )}
+        </nav>
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-[80rem] px-6 sm:px-10">
+      <div class="grid gap-10 lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-16">
+        <aside class="lg:pt-16" aria-label="Chapters">
+          <details class="group/toc lg:hidden border-b border-[color:var(--color-hairline)] py-4">
+            <summary class="flex cursor-pointer items-center justify-between text-sm font-medium text-[color:var(--color-ink)] list-none [&::-webkit-details-marker]:hidden">
+              <span class="flex items-center gap-3">
+                <span class="text-[0.6875rem] tracking-[0.22em] uppercase text-[color:var(--color-ink-faint)]">
+                  Contents
+                </span>
+                {currentChapter && (
+                  <span class="text-sm text-[color:var(--color-ink-muted)]">
+                    · {currentChapter.data.order === 0 ? 'Introduction' : `Chapter ${currentChapter.data.order}`}
+                  </span>
+                )}
+              </span>
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="size-4 shrink-0 transition-transform group-open/toc:rotate-180">
+                <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </summary>
+            <ol role="list" class="mt-6 space-y-1 text-sm">
+              <li>
+                <a
+                  href="/"
+                  aria-current={currentSlug === chapters[0]?.id ? 'page' : undefined}
+                  class="flex items-baseline gap-4 rounded-md px-3 py-2 text-[color:var(--color-ink-muted)] transition-colors hover:bg-[color:var(--color-canvas-sunk)] hover:text-[color:var(--color-ink)] aria-[current=page]:bg-[color:var(--color-canvas-sunk)] aria-[current=page]:text-[color:var(--color-ink)]"
+                >
+                  <span class="font-mono text-[0.6875rem] text-[color:var(--color-ink-faint)] tabular-nums w-6">00</span>
+                  <span>Introduction</span>
+                </a>
+              </li>
+              {sidebarChapters.map((entry) => {
+                const isCurrent = entry.id === currentSlug;
+                return (
+                  <li>
+                    <a
+                      href={`/${entry.id}/`}
+                      aria-current={isCurrent ? 'page' : undefined}
+                      class="flex items-baseline gap-4 rounded-md px-3 py-2 text-[color:var(--color-ink-muted)] transition-colors hover:bg-[color:var(--color-canvas-sunk)] hover:text-[color:var(--color-ink)] aria-[current=page]:bg-[color:var(--color-canvas-sunk)] aria-[current=page]:text-[color:var(--color-ink)]"
+                    >
+                      <span class="font-mono text-[0.6875rem] text-[color:var(--color-ink-faint)] tabular-nums w-6">
+                        {String(entry.data.order).padStart(2, '0')}
+                      </span>
+                      <span>{entry.data.title}</span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ol>
+          </details>
+
+          <nav aria-label="Chapters" class="hidden lg:block lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto lg:pb-8">
+            <p class="text-[0.6875rem] tracking-[0.22em] uppercase text-[color:var(--color-ink-faint)] mb-6">
+              Contents
+            </p>
+            <ol role="list" class="space-y-px text-sm">
+              <li>
+                <a
+                  href="/"
+                  aria-current={currentSlug === chapters[0]?.id ? 'page' : undefined}
+                  class="group/toc-item flex items-baseline gap-4 rounded-md py-1.5 pr-3 pl-3 -mx-3 text-[color:var(--color-ink-muted)] transition-colors hover:text-[color:var(--color-ink)] aria-[current=page]:text-[color:var(--color-ink)] aria-[current=page]:bg-[color:var(--color-canvas-sunk)]"
+                >
+                  <span class="font-mono text-[0.6875rem] text-[color:var(--color-ink-faint)] tabular-nums w-6 group-aria-[current=page]/toc-item:text-[color:var(--color-accent)]">00</span>
+                  <span class="leading-6">Introduction</span>
+                </a>
+              </li>
+              {sidebarChapters.map((entry) => {
+                const isCurrent = entry.id === currentSlug;
+                return (
+                  <li>
+                    <a
+                      href={`/${entry.id}/`}
+                      aria-current={isCurrent ? 'page' : undefined}
+                      class="group/toc-item flex items-baseline gap-4 rounded-md py-1.5 pr-3 pl-3 -mx-3 text-[color:var(--color-ink-muted)] transition-colors hover:text-[color:var(--color-ink)] aria-[current=page]:text-[color:var(--color-ink)] aria-[current=page]:bg-[color:var(--color-canvas-sunk)]"
+                    >
+                      <span class="font-mono text-[0.6875rem] text-[color:var(--color-ink-faint)] tabular-nums w-6 group-aria-[current=page]/toc-item:text-[color:var(--color-accent)]">
+                        {String(entry.data.order).padStart(2, '0')}
+                      </span>
+                      <span class="leading-6 text-pretty">{entry.data.title}</span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ol>
+          </nav>
+        </aside>
+
+        <main id="main-content" tabindex="-1" class="min-w-0 pb-24 pt-10 lg:pt-16">
+          <slot />
+        </main>
+      </div>
+    </div>
+
+    <footer class="border-t border-[color:var(--color-hairline)] mt-16">
+      <div class="mx-auto max-w-[80rem] px-6 py-10 sm:px-10">
+        <div class="flex flex-col gap-6 text-sm text-[color:var(--color-ink-muted)] lg:flex-row lg:items-start lg:justify-between">
+          <p class="lg:max-w-[40ch]">
+            <span class="font-display text-base text-[color:var(--color-ink)]">Rudiment</span>
+            <span class="mx-2 text-[color:var(--color-ink-faint)]">·</span>
+            A field guide to building a component system.
+          </p>
+          <div class="flex flex-col gap-2 lg:items-end lg:text-right">
+            <p>
+              Companion repository:
+              <a
+                href="https://github.com/Rudiment-UI/rudiment-ui"
+                rel="external noreferrer"
+                class="underline decoration-[color:var(--color-hairline-strong)] underline-offset-4 transition-colors hover:text-[color:var(--color-ink)] hover:decoration-[color:var(--color-accent)]"
+              >
+                Rudiment-UI/rudiment-ui
+              </a>
+            </p>
+            {/* PLACEMENT 4 — Footer addition (subtle, site-wide) */}
+            <p class="text-[color:var(--color-ink-faint)]">
+              Found an error?
+              {currentEditUrl ? (
+                <>
+                  <a
+                    href={currentEditUrl}
+                    target="_blank"
+                    rel="noreferrer external"
+                    class="underline decoration-[color:var(--color-hairline-strong)] underline-offset-4 transition-colors hover:text-[color:var(--color-ink)] hover:decoration-[color:var(--color-accent)]"
+                  >
+                    Edit this page
+                  </a>
+                  <span class="mx-2 text-[color:var(--color-ink-faint)]" aria-hidden="true">·</span>
+                </>
+              ) : null}
+              <a
+                href={newIssueUrl}
+                target="_blank"
+                rel="noreferrer external"
+                class="underline decoration-[color:var(--color-hairline-strong)] underline-offset-4 transition-colors hover:text-[color:var(--color-ink)] hover:decoration-[color:var(--color-accent)]"
+              >
+                Report an issue
+              </a>
+            </p>
+          </div>
+        </div>
+        <p class="mt-6 text-xs text-[color:var(--color-ink-faint)]">
+          <span aria-hidden="true">©</span>
+          <span class="sr-only">Copyright</span>
+          {currentYear} Written by
+          <a
+            href="https://joshuabriley.com"
+            rel="author external noreferrer"
+            class="underline decoration-[color:var(--color-hairline-strong)] underline-offset-4 transition-colors hover:text-[color:var(--color-ink)] hover:decoration-[color:var(--color-accent)]"
+          >
+            Joshua Briley
+          </a>. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      const loaders = document.querySelectorAll('[data-storybook-loader]');
+      loaders.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const figure = btn.closest('[data-storybook]');
+          if (!figure) return;
+          const src = figure.getAttribute('data-src');
+          const title = figure.getAttribute('data-title') ?? 'Storybook preview';
+          const height = figure.getAttribute('data-height') ?? '400px';
+          if (!src) return;
+          const iframe = document.createElement('iframe');
+          iframe.src = src;
+          iframe.title = title;
+          iframe.setAttribute('width', '100%');
+          iframe.style.height = height;
+          iframe.style.border = '0';
+          btn.replaceWith(iframe);
+        });
+      });
+
+      const copyIconMarkup = `
+        <svg data-copy-icon-copy viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="5.25" y="5.25" width="8.75" height="8.75" rx="1.5" />
+          <path d="M10.75 5.25V4A1.75 1.75 0 0 0 9 2.25H3.75A1.75 1.75 0 0 0 2 4v5.25A1.75 1.75 0 0 0 3.75 11h1.5" />
+        </svg>
+        <svg data-copy-icon-copied viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 8.25l3.25 3.25L13 4.75" />
+        </svg>
+      `;
+
+      document.querySelectorAll('.prose pre').forEach((pre) => {
+        if (pre.parentElement?.hasAttribute('data-code-block')) return;
+
+        const wrapper = document.createElement('div');
+        wrapper.setAttribute('data-code-block', '');
+        pre.parentNode?.insertBefore(wrapper, pre);
+        wrapper.appendChild(pre);
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.setAttribute('data-copy-code', '');
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.innerHTML = `${copyIconMarkup}<span data-copy-code-label>Copy</span>`;
+        wrapper.appendChild(button);
+
+        let resetTimer = 0;
+        button.addEventListener('click', async () => {
+          const code = pre.querySelector('code');
+          const text = (code ?? pre).textContent ?? '';
+
+          try {
+            await navigator.clipboard.writeText(text);
+          } catch {
+            const range = document.createRange();
+            range.selectNodeContents(code ?? pre);
+            const selection = window.getSelection();
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+            try {
+              document.execCommand('copy');
+            } finally {
+              selection?.removeAllRanges();
+            }
+          }
+
+          const label = button.querySelector('[data-copy-code-label]');
+          button.setAttribute('data-copied', '');
+          button.setAttribute('aria-label', 'Code copied to clipboard');
+          if (label) label.textContent = 'Copied';
+
+          window.clearTimeout(resetTimer);
+          resetTimer = window.setTimeout(() => {
+            button.removeAttribute('data-copied');
+            button.setAttribute('aria-label', 'Copy code to clipboard');
+            if (label) label.textContent = 'Copy';
+          }, 2000);
+        });
+      });
+    </script>
+  </body>
+</html>

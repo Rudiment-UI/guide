@@ -1,0 +1,142 @@
+---
+import { getCollection, render } from 'astro:content';
+import Guide from '../layouts/Guide.astro';
+import StackedBlocksIllustration from '../components/StackedBlocksIllustration.astro';
+import Ornament from '../components/Ornament.astro';
+
+const entries = await getCollection('guide');
+const intro = entries.find((entry) => entry.data.order === 0);
+
+if (!intro) {
+  throw new Error('No intro entry found (expected a guide entry with order: 0).');
+}
+
+const { Content } = await render(intro);
+
+const chapters = entries
+  .filter((entry) => entry.data.order > 0)
+  .sort((a, b) => a.data.order - b.data.order);
+const nextChapter = chapters[0];
+---
+
+<Guide
+  title={intro.data.title}
+  description={intro.data.description}
+  currentSlug={intro.id}
+>
+  <article>
+    <header class="mb-16 lg:mb-20">
+      <p class="flex items-center gap-3 text-[0.6875rem] tracking-[0.22em] uppercase text-[color:var(--color-ink-faint)]">
+        <span class="inline-block h-px w-8 bg-[color:var(--color-hairline-strong)]" aria-hidden="true"></span>
+        A field guide · 13 chapters
+      </p>
+
+      <h1 class="mt-8 font-display text-5xl font-normal tracking-tight text-pretty text-[color:var(--color-ink)] sm:text-6xl lg:text-7xl max-w-[24ch]">
+        Building your own component system, from first principles.
+      </h1>
+
+      <p class="mt-8 max-w-[60ch] text-lg leading-8 text-pretty text-[color:var(--color-ink-muted)] sm:text-xl sm:leading-9">
+        {intro.data.description}
+      </p>
+
+      <div class="mt-10 flex flex-wrap items-center gap-3">
+        {nextChapter && (
+          <a
+            href={`/${nextChapter.id}/`}
+            class="inline-flex items-center gap-2 rounded-full bg-[color:var(--color-ink)] px-5 py-2.5 text-sm font-medium text-[color:var(--color-canvas)] transition-colors hover:bg-[color:var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-accent)]"
+          >
+            Begin Chapter 01
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="size-4 shrink-0">
+              <path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        )}
+        <a
+          href="#contents"
+          class="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm text-[color:var(--color-ink-muted)] underline decoration-[color:var(--color-hairline-strong)] underline-offset-4 transition-colors hover:text-[color:var(--color-ink)] hover:decoration-[color:var(--color-accent)]"
+        >
+          View the series
+        </a>
+      </div>
+    </header>
+
+    <figure class="mb-20 rounded-2xl border border-[color:var(--color-hairline)] bg-[color:var(--color-canvas-sunk)] p-8 sm:p-12 lg:p-16">
+      <StackedBlocksIllustration class="mx-auto h-auto w-full max-w-xl" />
+      <figcaption class="mt-8 text-center text-sm text-[color:var(--color-ink-muted)]">
+        <span class="font-mono text-[0.6875rem] tracking-[0.2em] uppercase text-[color:var(--color-ink-faint)]">Figure 01</span>
+        <span class="mx-2 text-[color:var(--color-ink-faint)]">—</span>
+        Stacking primitives: tokens, layout, components, composition.
+      </figcaption>
+    </figure>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <div class="my-20 flex justify-center">
+      <Ornament />
+    </div>
+
+    <section id="contents" aria-labelledby="contents-heading" class="mt-20 scroll-mt-24">
+      <div class="flex flex-col gap-4 border-b border-[color:var(--color-hairline)] pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="text-[0.6875rem] tracking-[0.22em] uppercase text-[color:var(--color-ink-faint)]">
+            Table of contents
+          </p>
+          <h2 id="contents-heading" class="mt-3 font-display text-3xl font-normal tracking-tight text-[color:var(--color-ink)] sm:text-4xl">
+            Thirteen chapters, written to be read in order.
+          </h2>
+        </div>
+        <p class="text-sm text-[color:var(--color-ink-muted)] sm:max-w-[32ch] sm:text-right">
+          Each chapter establishes one layer of the system. Earlier layers compound into later ones.
+        </p>
+      </div>
+
+      <ol role="list" class="divide-y divide-[color:var(--color-hairline)]">
+        {chapters.map((entry) => (
+          <li>
+            <a
+              href={`/${entry.id}/`}
+              class="group/chapter grid grid-cols-[auto_1fr_auto] items-baseline gap-6 py-6 transition-colors hover:bg-[color:var(--color-canvas-sunk)] sm:gap-10 sm:py-8"
+            >
+              <span class="font-mono text-[0.75rem] tracking-[0.18em] uppercase text-[color:var(--color-ink-faint)] tabular-nums w-14 pl-2 sm:pl-4">
+                {String(entry.data.order).padStart(2, '0')}
+              </span>
+              <div class="min-w-0">
+                <h3 class="font-display text-xl font-normal tracking-tight text-[color:var(--color-ink)] text-pretty sm:text-2xl">
+                  {entry.data.title}
+                </h3>
+                <p class="mt-2 text-sm leading-6 text-[color:var(--color-ink-muted)] text-pretty max-w-[60ch]">
+                  {entry.data.description}
+                </p>
+              </div>
+              <span class="flex size-9 shrink-0 items-center justify-center rounded-full border border-[color:var(--color-hairline)] text-[color:var(--color-ink-muted)] transition-colors pr-2 group-hover/chapter:border-[color:var(--color-accent)] group-hover/chapter:text-[color:var(--color-accent)] sm:pr-4" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none" class="size-4">
+                  <path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {nextChapter && (
+      <nav aria-label="Chapter navigation" class="mt-20 flex justify-end border-t border-[color:var(--color-hairline)] pt-10">
+        <a
+          href={`/${nextChapter.id}/`}
+          rel="next"
+          class="group/next flex max-w-sm flex-col items-end gap-1 text-right"
+        >
+          <span class="text-[0.6875rem] tracking-[0.22em] uppercase text-[color:var(--color-ink-faint)]">
+            Next — Chapter 01
+          </span>
+          <span class="font-display text-2xl tracking-tight text-[color:var(--color-ink)] transition-colors group-hover/next:text-[color:var(--color-accent)]">
+            {nextChapter.data.title}
+            <span aria-hidden="true" class="ml-2 inline-block transition-transform group-hover/next:translate-x-1">→</span>
+          </span>
+        </a>
+      </nav>
+    )}
+  </article>
+</Guide>

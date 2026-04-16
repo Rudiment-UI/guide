@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+    <style>
+        .stroke { stroke: #0a0a0a; }
+        .bg { fill: #ffffff; }
+        @media (prefers-color-scheme: dark) {
+            .stroke { stroke: #fafafa; }
+            .bg { fill: #0a0a0a; }
+        }
+    </style>
+    <g stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+        <rect class="stroke" x="22" y="22" width="50" height="50" rx="7" />
+        <rect class="stroke bg" x="56" y="56" width="50" height="50" rx="7" />
+    </g>
+</svg>
