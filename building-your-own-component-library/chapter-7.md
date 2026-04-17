@@ -232,7 +232,7 @@ Component CSS references the Tailwind @theme variable names (for example, `--col
 
 Notice that every color references a semantic token, not a global one. `var(--color-brand-primary)`, not `var(--color-blue-500)`. This means a consumer can rebrand the entire library by changing the semantic token aliases, without touching any component CSS.
 
-::Storybook{url="https://rudiment-ui.netlify.app/?path=/docs/components-button--docs" title="Button variants in Storybook"}
+::Storybook{url="https://rudiment-ui.netlify.app/?path=/story/components-button--all-variants" title="Button variants in Storybook"}
 ::
 
 ## Building Input
@@ -346,7 +346,7 @@ You don't set any of these attributes manually. The hook returns them inside `in
 
 The error state is conditional: when `isInvalid` is true (which happens when `errorMessage` is passed), the input shows the error message and hides the description. When the input is valid, it shows the description (if one exists). This prevents screen readers from announcing both the description and the error simultaneously.
 
-::Storybook{url="https://rudiment-ui.netlify.app/?path=/docs/components-input--docs" title="Input default state in Storybook"}
+::Storybook{url="https://rudiment-ui.netlify.app/?path=/story/components-input--default" title="Input default state in Storybook"}
 ::
 
 ## IconButton
@@ -405,7 +405,7 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
 
 The `'aria-label': string` type (without the `?` optional marker) forces consumers to provide an accessible label. TypeScript will produce a compile error if they forget. This is a deliberate design choice: an icon-only button without an accessible name is unusable for screen reader users (it's announced as "button" with no label), and making it a required prop prevents that failure mode at development time rather than in an accessibility audit.
 
-::Storybook{url="https://rudiment-ui.netlify.app/?path=/docs/components-iconbutton--docs" title="Icon Button Variants"}
+::Storybook{url="https://rudiment-ui.netlify.app/?path=/story/components-iconbutton--all-variants" title="Icon Button Variants"}
 ::
 
 ## What you have now

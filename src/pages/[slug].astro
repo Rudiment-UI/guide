@@ -57,7 +57,7 @@ const issueUrl = `https://github.com/${guideRepo}/issues/new?title=${issueTitle}
           href={editUrl}
           target="_blank"
           rel="noreferrer external"
-          class="group/edit inline-flex items-center gap-2 text-[0.6875rem] tracking-[0.22em] uppercase text-[color:var(--color-ink-faint)] transition-colors hover:text-[color:var(--color-ink)]"
+          class="group/edit inline-flex items-center gap-2 text-[0.6875rem] tracking-[0.22em] uppercase text-[color:var(--color-ink-faint)] transition-colors hover:text-[color:var(--color-ink)] hover:underline hover:underline-offset-4"
         >
           <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0">
             <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z" clip-rule="evenodd" />
@@ -90,7 +90,7 @@ const issueUrl = `https://github.com/${guideRepo}/issues/new?title=${issueTitle}
             <a
               href={previous.data.order === 0 ? '/' : `/${previous.id}/`}
               rel="prev"
-              class="group/prev flex flex-col gap-2 rounded-lg border border-transparent p-4 -m-4 transition-colors hover:border-[color:var(--color-hairline)] hover:bg-[color:var(--color-canvas-sunk)]"
+              class="group prev flex flex-col gap-2 rounded-lg border border-transparent p-4 -m-4 transition-colors hover:border-[color:var(--color-hairline)] hover:bg-[color:var(--color-canvas-sunk)]"
             >
               <span class="text-[0.6875rem] tracking-[0.22em] uppercase text-[color:var(--color-ink-faint)]">
                 ← Previous
@@ -98,7 +98,7 @@ const issueUrl = `https://github.com/${guideRepo}/issues/new?title=${issueTitle}
                   <span class="ml-1 tabular-nums">· Chapter {String(previous.data.order).padStart(2, '0')}</span>
                 )}
               </span>
-              <span class="font-display text-xl tracking-tight text-[color:var(--color-ink)] transition-colors group-hover/prev:text-[color:var(--color-accent)] text-pretty">
+              <span class="group-hover:underline group-hover:underline-offset-4 font-display text-xl tracking-tight text-[color:var(--color-ink)] transition-colors group-hover/prev:text-[color:var(--color-accent)] text-pretty">
                 {previous.data.title}
               </span>
             </a>
@@ -110,12 +110,12 @@ const issueUrl = `https://github.com/${guideRepo}/issues/new?title=${issueTitle}
             <a
               href={`/${next.id}/`}
               rel="next"
-              class="group/next flex flex-col items-end gap-2 rounded-lg border border-transparent p-4 -m-4 text-right transition-colors hover:border-[color:var(--color-hairline)] hover:bg-[color:var(--color-canvas-sunk)]"
+              class="group next flex flex-col items-end gap-2 rounded-lg border border-transparent p-4 -m-4 text-right transition-colors hover:border-[color:var(--color-hairline)] hover:bg-[color:var(--color-canvas-sunk)]"
             >
               <span class="text-[0.6875rem] tracking-[0.22em] uppercase text-[color:var(--color-ink-faint)] tabular-nums">
                 Next · Chapter {String(next.data.order).padStart(2, '0')} →
               </span>
-              <span class="font-display text-xl tracking-tight text-[color:var(--color-ink)] transition-colors group-hover/next:text-[color:var(--color-accent)] text-pretty">
+              <span class="group-hover:underline group-hover:underline-offset-4 font-display text-xl tracking-tight text-[color:var(--color-ink)] transition-colors group-hover/next:text-[color:var(--color-accent)] text-pretty">
                 {next.data.title}
               </span>
             </a>

@@ -203,7 +203,7 @@ This is a lot of code for a select input. That's the point. Getting keyboard nav
 
 Here's the finished Select rendered from the companion repository's Storybook. Open the popover to exercise the keyboard navigation, typeahead, and focus behavior described above.
 
-::Storybook{url="https://rudiment-ui.netlify.app/?path=/docs/components-select--docs" title="Select in Storybook"}
+::Storybook{url="https://rudiment-ui.netlify.app/?path=/story/components-select--with-description" title="Select in Storybook"}
 ::
 
 ## Checkbox and CheckboxGroup
@@ -318,7 +318,7 @@ export function CheckboxGroup(props: CheckboxGroupProps) {
 
 Here's the finished Checkbox rendered from the companion repository's Storybook, including the indeterminate state and grouped variants.
 
-::Storybook{url="https://rudiment-ui.netlify.app/?path=/docs/components-checkbox--docs" title="Checkbox in Storybook"}
+::Storybook{url="https://rudiment-ui.netlify.app/?path=/story/components-checkbox--group" title="Checkbox in Storybook"}
 ::
 
 ## RadioGroup
@@ -387,7 +387,7 @@ Both `CheckboxGroup` and `RadioGroup` include a `description` prop and spread `d
 
 Here's the finished RadioGroup rendered from the companion repository's Storybook. Use the arrow keys once focus is inside the group to see the keyboard behavior described above.
 
-::Storybook{url="https://rudiment-ui.netlify.app/?path=/docs/components-radiogroup--docs" title="RadioGroup in Storybook"}
+::Storybook{url="https://rudiment-ui.netlify.app/?path=/story/components-radiogroup--with-description" title="RadioGroup in Storybook"}
 ::
 
 ## Switch
@@ -448,7 +448,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
 
 Here's the finished Switch rendered from the companion repository's Storybook. Toggle it to see the track-and-thumb animation described above.
 
-::Storybook{url="https://rudiment-ui.netlify.app/?path=/docs/components-switch--docs" title="Switch in Storybook"}
+::Storybook{url="https://rudiment-ui.netlify.app/?path=/story/components-switch--all-states" title="Switch in Storybook"}
 ::
 
 ## What you have now

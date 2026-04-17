@@ -44,6 +44,7 @@ const ogImageUrl = new URL(ogImagePath, siteUrl).href;
 const ogImageAlt = 'Rudiment — A Field Guide';
 
 const isArticle = currentChapter !== undefined && currentChapter.data.order > 0;
+const isHome = Astro.url.pathname === '/';
 const pageTitle = `${title} — ${siteName}`;
 
 const introEntry = chapters.find((entry) => entry.data.order === 0);
@@ -210,7 +211,7 @@ const ogType = isArticle ? 'article' : 'website';
                 href="https://rudiment-ui.netlify.app/"
                 target="_blank"
                 rel="noreferrer external"
-                class="transition-colors hover:text-[color:var(--color-ink)]"
+                class="transition-colors hover:text-[color:var(--color-ink)] hover:underline hover:underline-offset-4"
               >
                 Storybook
               </a>
@@ -220,16 +221,16 @@ const ogType = isArticle ? 'article' : 'website';
                 href="https://github.com/Rudiment-UI/rudiment-ui"
                 target="_blank"
                 rel="noreferrer external"
-                class="transition-colors hover:text-[color:var(--color-ink)]"
+                class="transition-colors hover:text-[color:var(--color-ink)] hover:underline hover:underline-offset-4"
               >
                 Repository
               </a>
             </li>
           </ul>
 
-          {sidebarChapters.length > 0 && chapters[0] && (
+          {isHome && sidebarChapters.length > 0 && chapters[0] && (
             <a
-              href={currentSlug ? `/${sidebarChapters[0].id}/` : `/${sidebarChapters[0].id}/`}
+              href={`/${sidebarChapters[0].id}/`}
               class="inline-flex items-center gap-2 rounded-full bg-[color:var(--color-ink)] px-4 py-2 text-sm font-medium text-[color:var(--color-canvas)] transition-colors hover:bg-[color:var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-accent)]"
             >
               Start reading
@@ -266,10 +267,10 @@ const ogType = isArticle ? 'article' : 'website';
                 <a
                   href="/"
                   aria-current={currentSlug === chapters[0]?.id ? 'page' : undefined}
-                  class="flex items-baseline gap-4 rounded-md px-3 py-2 text-[color:var(--color-ink-muted)] transition-colors hover:bg-[color:var(--color-canvas-sunk)] hover:text-[color:var(--color-ink)] aria-[current=page]:bg-[color:var(--color-canvas-sunk)] aria-[current=page]:text-[color:var(--color-ink)]"
+                  class="flex items-baseline gap-4 rounded-md px-3 py-2 text-[color:var(--color-ink-muted)] transition-colors hover:bg-[color:var(--color-canvas-sunk)] hover:text-[color:var(--color-ink)] group aria-[current=page]:bg-[color:var(--color-canvas-sunk)] aria-[current=page]:text-[color:var(--color-ink)]"
                 >
                   <span class="font-mono text-[0.6875rem] text-[color:var(--color-ink-faint)] tabular-nums w-6">00</span>
-                  <span>Introduction</span>
+                  <span class="group-hover:underline group-hover:underline-offset-4">Introduction</span>
                 </a>
               </li>
               {sidebarChapters.map((entry) => {
@@ -279,12 +280,12 @@ const ogType = isArticle ? 'article' : 'website';
                     <a
                       href={`/${entry.id}/`}
                       aria-current={isCurrent ? 'page' : undefined}
-                      class="flex items-baseline gap-4 rounded-md px-3 py-2 text-[color:var(--color-ink-muted)] transition-colors hover:bg-[color:var(--color-canvas-sunk)] hover:text-[color:var(--color-ink)] aria-[current=page]:bg-[color:var(--color-canvas-sunk)] aria-[current=page]:text-[color:var(--color-ink)]"
+                      class="flex items-baseline gap-4 rounded-md px-3 py-2 text-[color:var(--color-ink-muted)] transition-colors hover:bg-[color:var(--color-canvas-sunk)] hover:text-[color:var(--color-ink)] group aria-[current=page]:bg-[color:var(--color-canvas-sunk)] aria-[current=page]:text-[color:var(--color-ink)]"
                     >
                       <span class="font-mono text-[0.6875rem] text-[color:var(--color-ink-faint)] tabular-nums w-6">
                         {String(entry.data.order).padStart(2, '0')}
                       </span>
-                      <span>{entry.data.title}</span>
+                      <span class="group-hover:underline group-hover:underline-offset-4">{entry.data.title}</span>
                     </a>
                   </li>
                 );
@@ -301,10 +302,10 @@ const ogType = isArticle ? 'article' : 'website';
                 <a
                   href="/"
                   aria-current={currentSlug === chapters[0]?.id ? 'page' : undefined}
-                  class="group/toc-item flex items-baseline gap-4 rounded-md py-1.5 pr-3 pl-3 -mx-3 text-[color:var(--color-ink-muted)] transition-colors hover:text-[color:var(--color-ink)] aria-[current=page]:text-[color:var(--color-ink)] aria-[current=page]:bg-[color:var(--color-canvas-sunk)]"
+                  class="toc-item flex items-baseline gap-4 rounded-md py-1.5 pr-3 pl-3 -mx-3 text-[color:var(--color-ink-muted)] transition-colors hover:text-[color:var(--color-ink)] group aria-[current=page]:text-[color:var(--color-ink)] aria-[current=page]:bg-[color:var(--color-canvas-sunk)]"
                 >
                   <span class="font-mono text-[0.6875rem] text-[color:var(--color-ink-faint)] tabular-nums w-6 group-aria-[current=page]/toc-item:text-[color:var(--color-accent)]">00</span>
-                  <span class="leading-6">Introduction</span>
+                  <span class="leading-6 hover:underline hover:underline-offset-4">Introduction</span>
                 </a>
               </li>
               {sidebarChapters.map((entry) => {
@@ -314,12 +315,12 @@ const ogType = isArticle ? 'article' : 'website';
                     <a
                       href={`/${entry.id}/`}
                       aria-current={isCurrent ? 'page' : undefined}
-                      class="group/toc-item flex items-baseline gap-4 rounded-md py-1.5 pr-3 pl-3 -mx-3 text-[color:var(--color-ink-muted)] transition-colors hover:text-[color:var(--color-ink)] aria-[current=page]:text-[color:var(--color-ink)] aria-[current=page]:bg-[color:var(--color-canvas-sunk)]"
+                      class="toc-item flex items-baseline gap-4 rounded-md py-1.5 pr-3 pl-3 -mx-3 text-[color:var(--color-ink-muted)] transition-colors hover:text-[color:var(--color-ink)] group aria-[current=page]:text-[color:var(--color-ink)] aria-[current=page]:bg-[color:var(--color-canvas-sunk)]"
                     >
                       <span class="font-mono text-[0.6875rem] text-[color:var(--color-ink-faint)] tabular-nums w-6 group-aria-[current=page]/toc-item:text-[color:var(--color-accent)]">
                         {String(entry.data.order).padStart(2, '0')}
                       </span>
-                      <span class="leading-6 text-pretty">{entry.data.title}</span>
+                      <span class="leading-6 text-pretty hover:underline hover:underline-offset-4 flex">{entry.data.title}</span>
                     </a>
                   </li>
                 );
@@ -436,8 +437,10 @@ const ogType = isArticle ? 'article' : 'website';
         const button = document.createElement('button');
         button.type = 'button';
         button.setAttribute('data-copy-code', '');
-        button.setAttribute('aria-label', 'Copy code to clipboard');
-        button.innerHTML = `${copyIconMarkup}<span data-copy-code-label>Copy</span>`;
+        button.setAttribute('aria-label', 'Copy');
+        button.setAttribute('aria-live', 'assertive');
+        button.setAttribute('aria-atomic', 'true');
+        button.innerHTML = `${copyIconMarkup}<span data-copy-code-label>Copied</span>`;
         wrapper.appendChild(button);
 
         let resetTimer = 0;
@@ -460,16 +463,13 @@ const ogType = isArticle ? 'article' : 'website';
             }
           }
 
-          const label = button.querySelector('[data-copy-code-label]');
           button.setAttribute('data-copied', '');
-          button.setAttribute('aria-label', 'Code copied to clipboard');
-          if (label) label.textContent = 'Copied';
+          button.setAttribute('aria-label', 'Copied');
 
           window.clearTimeout(resetTimer);
           resetTimer = window.setTimeout(() => {
             button.removeAttribute('data-copied');
-            button.setAttribute('aria-label', 'Copy code to clipboard');
-            if (label) label.textContent = 'Copy';
+            button.setAttribute('aria-label', 'Copy');
           }, 2000);
         });
       });

@@ -4,22 +4,26 @@ interface Props {
   label?: string;
 }
 const { class: className, label } = Astro.props;
+const fadeId = `ornament-fade-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
 <svg
-  viewBox="0 0 120 16"
+  viewBox="0 0 240 16"
   fill="none"
   role={label ? "img" : "presentation"}
   aria-label={label}
   aria-hidden={label ? undefined : "true"}
-  class:list={["text-[color:var(--color-ink-faint)]", className]}
+  class:list={["h-4 w-60 text-[color:var(--color-ink-faint)]", className]}
 >
-  <g stroke="currentColor" stroke-width="1" stroke-linecap="round">
-    <line x1="4" y1="8" x2="48" y2="8" opacity="0.6" />
-    <line x1="72" y1="8" x2="116" y2="8" opacity="0.6" />
-  </g>
-  <g stroke="var(--color-accent)" stroke-width="1" fill="none">
-    <circle cx="60" cy="8" r="3.5" />
-    <circle cx="60" cy="8" r="0.75" fill="var(--color-accent)" />
-  </g>
+  <defs>
+    <linearGradient id={fadeId} x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="currentColor" stop-opacity="0" />
+      <stop offset="50%" stop-color="currentColor" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <line x1="0" y1="8" x2="104" y2="8" stroke={`url(#${fadeId})`} stroke-width="1" />
+  <line x1="136" y1="8" x2="240" y2="8" stroke={`url(#${fadeId})`} stroke-width="1" />
+  <circle cx="120" cy="8" r="2.5" stroke="currentColor" stroke-width="1" opacity="0.7" />
+  <circle cx="120" cy="8" r="0.6" fill="var(--color-accent)" opacity="0.55" />
 </svg>
