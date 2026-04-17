@@ -183,6 +183,29 @@ const ogType = isArticle ? 'article' : 'website';
     <meta name="twitter:image:alt" content={ogImageAlt} />
 
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var valid = stored === 'light' || stored === 'dark' || stored === 'high-contrast';
+          if (valid) {
+            document.documentElement.setAttribute('data-theme', stored);
+            return;
+          }
+          if (window.matchMedia('(prefers-contrast: more)').matches) {
+            document.documentElement.setAttribute('data-theme', 'high-contrast');
+            return;
+          }
+          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            return;
+          }
+          document.documentElement.setAttribute('data-theme', 'light');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
   </head>
   <body class="isolate bg-[color:var(--color-canvas)] text-[color:var(--color-ink)]">
     <a href="#main-content" data-skip-link>Skip to main content</a>
@@ -227,6 +250,54 @@ const ogType = isArticle ? 'article' : 'website';
               </a>
             </li>
           </ul>
+
+          <details data-theme-switcher>
+            <summary aria-label="Change theme" aria-haspopup="menu">
+              <svg data-theme-icon="light" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <circle cx="10" cy="10" r="3.25" stroke="currentColor" stroke-width="1.5" />
+                <path d="M10 2v2M10 16v2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M2 10h2M16 10h2M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+              <svg data-theme-icon="dark" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M15.5 12.2A6 6 0 0 1 7.8 4.5a.75.75 0 0 0-1-1 7.5 7.5 0 1 0 9.7 9.7.75.75 0 0 0-1-1Z" fill="currentColor" />
+              </svg>
+              <svg data-theme-icon="high-contrast" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5" />
+                <path d="M10 2.75v14.5a7.25 7.25 0 0 0 0-14.5Z" fill="currentColor" />
+              </svg>
+              <span class="sr-only">Theme</span>
+            </summary>
+            <div data-theme-menu role="menu">
+              <button type="button" data-theme-value="light" role="menuitemradio" aria-checked="false">
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <circle cx="10" cy="10" r="3.25" stroke="currentColor" stroke-width="1.5" />
+                  <path d="M10 2v2M10 16v2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M2 10h2M16 10h2M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+                <span>Light</span>
+                <svg data-theme-check viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8.25l3.25 3.25L13 4.75" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+              <button type="button" data-theme-value="dark" role="menuitemradio" aria-checked="false">
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M15.5 12.2A6 6 0 0 1 7.8 4.5a.75.75 0 0 0-1-1 7.5 7.5 0 1 0 9.7 9.7.75.75 0 0 0-1-1Z" fill="currentColor" />
+                </svg>
+                <span>Dark</span>
+                <svg data-theme-check viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8.25l3.25 3.25L13 4.75" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+              <button type="button" data-theme-value="high-contrast" role="menuitemradio" aria-checked="false">
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5" />
+                  <path d="M10 2.75v14.5a7.25 7.25 0 0 0 0-14.5Z" fill="currentColor" />
+                </svg>
+                <span>High contrast</span>
+                <svg data-theme-check viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8.25l3.25 3.25L13 4.75" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </details>
 
           {isHome && sidebarChapters.length > 0 && chapters[0] && (
             <a
@@ -339,7 +410,10 @@ const ogType = isArticle ? 'article' : 'website';
       <div class="mx-auto max-w-[80rem] px-6 py-10 sm:px-10">
         <div class="flex flex-col gap-6 text-sm text-[color:var(--color-ink-muted)] lg:flex-row lg:items-start lg:justify-between">
           <p class="lg:max-w-[40ch]">
-            <span class="font-display text-base text-[color:var(--color-ink)]">Rudiment</span>
+            <span class="inline-flex items-center gap-2 align-[-0.25em]">
+              <Logomark class="size-5" />
+              <span class="font-display text-base text-[color:var(--color-ink)]">Rudiment</span>
+            </span>
             <span class="mx-2 text-[color:var(--color-ink-faint)]">·</span>
             A field guide to building a component system.
           </p>
@@ -397,6 +471,50 @@ const ogType = isArticle ? 'article' : 'website';
     </footer>
 
     <script>
+      const themeSwitcher = document.querySelector('[data-theme-switcher]');
+      if (themeSwitcher) {
+        const themeButtons = themeSwitcher.querySelectorAll('[data-theme-value]');
+        const syncChecked = (theme: string) => {
+          themeButtons.forEach((btn) => {
+            const value = btn.getAttribute('data-theme-value');
+            btn.setAttribute('aria-checked', value === theme ? 'true' : 'false');
+          });
+        };
+
+        const applyTheme = (theme: string) => {
+          document.documentElement.setAttribute('data-theme', theme);
+          try {
+            localStorage.setItem('theme', theme);
+          } catch {}
+          syncChecked(theme);
+          (themeSwitcher as HTMLDetailsElement).open = false;
+        };
+
+        const current = document.documentElement.getAttribute('data-theme') ?? 'light';
+        syncChecked(current);
+
+        themeButtons.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const value = btn.getAttribute('data-theme-value');
+            if (value) applyTheme(value);
+          });
+        });
+
+        document.addEventListener('click', (event) => {
+          if (!(themeSwitcher as HTMLDetailsElement).open) return;
+          if (!themeSwitcher.contains(event.target as Node)) {
+            (themeSwitcher as HTMLDetailsElement).open = false;
+          }
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && (themeSwitcher as HTMLDetailsElement).open) {
+            (themeSwitcher as HTMLDetailsElement).open = false;
+            (themeSwitcher.querySelector('summary') as HTMLElement | null)?.focus();
+          }
+        });
+      }
+
       const loaders = document.querySelectorAll('[data-storybook-loader]');
       loaders.forEach((btn) => {
         btn.addEventListener('click', () => {
