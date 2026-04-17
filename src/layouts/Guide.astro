@@ -44,7 +44,6 @@ const ogImageUrl = new URL(ogImagePath, siteUrl).href;
 const ogImageAlt = 'Rudiment — A Field Guide';
 
 const isArticle = currentChapter !== undefined && currentChapter.data.order > 0;
-const isHome = Astro.url.pathname === '/';
 const pageTitle = `${title} — ${siteName}`;
 
 const introEntry = chapters.find((entry) => entry.data.order === 0);
@@ -207,7 +206,7 @@ const ogType = isArticle ? 'article' : 'website';
       })();
     </script>
   </head>
-  <body class="isolate bg-[color:var(--color-canvas)] text-[color:var(--color-ink)]">
+  <body id="top" class="isolate bg-[color:var(--color-canvas)] text-[color:var(--color-ink)]">
     <a href="#main-content" data-skip-link>Skip to main content</a>
 
     <header class="border-b border-[color:var(--color-hairline)] bg-[color:var(--color-canvas)]/90 backdrop-blur sticky top-0 z-30">
@@ -298,23 +297,11 @@ const ogType = isArticle ? 'article' : 'website';
               </button>
             </div>
           </details>
-
-          {isHome && sidebarChapters.length > 0 && chapters[0] && (
-            <a
-              href={`/${sidebarChapters[0].id}/`}
-              class="inline-flex items-center gap-2 rounded-full bg-[color:var(--color-ink)] px-4 py-2 text-sm font-medium text-[color:var(--color-canvas)] transition-colors hover:bg-[color:var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-accent)]"
-            >
-              Start reading
-              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="size-4 shrink-0">
-                <path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </a>
-          )}
         </nav>
       </div>
     </header>
 
-    <div class="mx-auto max-w-[80rem] px-6 sm:px-10">
+    <div  class="mx-auto max-w-[80rem] px-6 sm:px-10">
       <div class="grid gap-10 lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-16">
         <aside class="lg:pt-16" aria-label="Chapters">
           <details class="group/toc lg:hidden border-b border-[color:var(--color-hairline)] py-4">

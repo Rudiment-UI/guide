@@ -2,7 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Guide from '../layouts/Guide.astro';
 import StackedBlocksIllustration from '../components/StackedBlocksIllustration.astro';
-import Ornament from '../components/Ornament.astro';
+import ChapterEnd from '../components/ChapterEnd.astro';
 
 const entries = await getCollection('guide');
 const intro = entries.find((entry) => entry.data.order === 0);
@@ -73,8 +73,8 @@ const nextChapter = chapters[0];
       <Content />
     </div>
 
-    <div class="my-20 flex justify-center">
-      <Ornament />
+    <div class="my-20">
+      <ChapterEnd label="End of Introduction" />
     </div>
 
     <section id="contents" aria-labelledby="contents-heading" class="mt-20 scroll-mt-24">

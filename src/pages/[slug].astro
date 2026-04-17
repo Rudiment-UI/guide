@@ -1,7 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import Guide from '../layouts/Guide.astro';
-import Ornament from '../components/Ornament.astro';
+import ChapterEnd from '../components/ChapterEnd.astro';
 import ChapterMark from '../components/ChapterMark.astro';
 
 export async function getStaticPaths() {
@@ -79,8 +79,11 @@ const issueUrl = `https://github.com/${guideRepo}/issues/new?title=${issueTitle}
       <Content />
     </div>
 
-    <div class="my-20 flex justify-center">
-      <Ornament />
+    <div class="my-20">
+      <ChapterEnd
+        label={`End of Chapter ${String(entry.data.order).padStart(2, '0')} · Back to top`}
+        href="#top"
+      />
     </div>
 
     <nav aria-label="Chapter navigation" class="mt-12 border-t border-[color:var(--color-hairline)] pt-10">

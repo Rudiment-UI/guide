@@ -26,6 +26,12 @@
     color-scheme: light;
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
   :root[data-theme="dark"] {
     color-scheme: dark;
     --color-canvas: oklch(16% 0.008 70);
